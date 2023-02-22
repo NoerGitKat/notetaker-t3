@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { Header } from "~/components";
+import { Content, Header } from "~/components";
 
 import { api } from "~/utils/api";
 
@@ -15,6 +15,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
+      <Content />
     </>
   );
 };
