@@ -2,6 +2,8 @@ import { type Topic } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { api } from "~/utils/api";
+import Note from "./Note";
+import NoteEditor from "./NoteEditor";
 
 interface IContentProps {}
 
@@ -18,6 +20,27 @@ const Content: React.FC<IContentProps> = (props) => {
     }
   );
 
+  const { data: notes, refetch: refetchNotes } = api.notes.getAll.useQuery(
+    {
+      topicId: selectedTopic?.id ?? "",
+    },
+    {
+      enabled: sessionData?.user !== undefined && selectedTopic !== null,
+    }
+  );
+
+  const createNote = api.notes.create.useMutation({
+    onSuccess: () => {
+      void refetchNotes();
+    },
+  });
+
+  const deleteNote = api.notes.delete.useMutation({
+    onSuccess: () => {
+      void refetchNotes();
+    },
+  });
+
   const createTopic = api.topics.create.useMutation({
     onSuccess: () => {
       void refetchTopics();
@@ -31,6 +54,14 @@ const Content: React.FC<IContentProps> = (props) => {
       });
       event.currentTarget.value = "";
     }
+  };
+
+  const saveNote = ({ title, content }: { title: string; content: string }) => {
+    void createNote.mutate({
+      title,
+      content,
+      topicId: selectedTopic?.id ?? "",
+    });
   };
 
   return (
@@ -57,6 +88,20 @@ const Content: React.FC<IContentProps> = (props) => {
           onKeyDown={onKeyDownHandler}
           className="w-fu input-bordered input input-sm"
         />
+      </div>
+      <div className="col-span-3">
+        <ul>
+          {notes &&
+            notes.map((note) => (
+              <li key={note.id} className="mt-5">
+                <Note
+                  note={note}
+                  onDelete={() => void deleteNote.mutate({ id: note.id })}
+                />
+              </li>
+            ))}
+        </ul>
+        <NoteEditor onSave={saveNote} />
       </div>
     </section>
   );
