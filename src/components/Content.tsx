@@ -5,9 +5,7 @@ import { api } from "~/utils/api";
 import Note from "./Note";
 import NoteEditor from "./NoteEditor";
 
-interface IContentProps {}
-
-const Content: React.FC<IContentProps> = (props) => {
+const Content: React.FC = () => {
   const { data: sessionData } = useSession();
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>();
   const { data: topics, refetch: refetchTopics } = api.topics.getAll.useQuery(

@@ -2,9 +2,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import * as React from "react";
 
-interface IHeaderProps {}
-
-const Header: React.FC<IHeaderProps> = (props) => {
+const Header: React.FC = () => {
   const { data: sessionData } = useSession();
   return (
     <nav className="navbar bg-primary text-primary-content">
